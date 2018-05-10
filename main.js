@@ -1,6 +1,7 @@
 import BackGround from 'sprites/background'
 import Box from 'sprites/box'
 import plane from 'sprites/plane'
+import arrow from 'sprites/arrow'
 
 import render from 'runtime/render';
 import touchEvent from 'runtime/touch-event'
@@ -27,6 +28,7 @@ export default class Main {
     this.background = new BackGround(ctx)
     this.box = new Box(ctx)
     this.plane = new plane(ctx)
+    this.arrow = new arrow(ctx)
 
     this.render = render.bind(this)
 

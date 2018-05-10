@@ -13,6 +13,7 @@ const BoxItem = class {
   constructor(config = {}) {
     [this.boxX, this.boxY] = [config.boxX, config.boxY]
     this.box = config.box
+    this.plane = []
   }
   switchBox(isSelected) {
     if (typeof isSelected === 'boolean') {
@@ -144,11 +145,14 @@ export default class Box {
     })
   }
   drawPlane(boxX, boxY) {
+    this.cleanBoxList()
     let centerBox = Object.assign({}, {boxX, boxY})
     this.plane(centerBox).forEach((box, index) => {
       if (this.boxArr[box.boxX] && this.boxArr[box.boxX][box.boxY]) {
         this.boxArr[box.boxX][box.boxY].die = box.die
-        this.boxArr[box.boxX][box.boxY].plane = dataBus.isPlaneMove
+        if (this.boxArr[box.boxX][box.boxY].plane.indexOf(dataBus.isPlaneMove) < 0) {
+          this.boxArr[box.boxX][box.boxY].plane.push(dataBus.isPlaneMove)
+        }
         this.boxArr[box.boxX][box.boxY].switchBox(true)
       } else {
         box.inexist = true
@@ -156,9 +160,12 @@ export default class Box {
     })
   }
   cleanBoxList() {
-    boxArr.forEach((el_, index_) => {
+    this.boxArr.forEach((el_, index_) => {
       el_.forEach((el, index) => {
-        el.box.switchBox(false)
+        if(el.plane.length == 1 && (el.plane.indexOf(dataBus.isPlaneMove) > -1) && el.plane[el.plane.length -1] === dataBus.isPlaneMove) {
+          el.plane.splice(el.plane.indexOf(dataBus.isPlaneMove), 1)
+          el.switchBox(false)
+        }
       })
     })
   }

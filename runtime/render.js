@@ -3,6 +3,7 @@ let funcs = {
     this.background.drawBg()
     this.box.drawBox()
     this.plane.draw()
+    this.arrow.draw()
   }
 }
 
@@ -28,16 +29,10 @@ let eventFuncs = function(){
       this.plane.planeList[dataBus.isPlaneMove].move(dataBus.touchMovePoint)
       this.box.boxArr.forEach((el_, index_) => {
         el_.forEach((el, index) => {
-          el.inexist = false
           if (el.box.isCollideWith(
             dataBus.touchMovePoint.pageX || 0,
             dataBus.touchMovePoint.pageY - screenHeight || 0
           )) {
-            this.box.boxArr.forEach((el_, index_) => {
-              el_.forEach((el, index) => {
-                this.box.boxArr[index_][index].switchBox(false)
-              })
-            })
             this.box.drawPlane(index_, index)
             dataBus.centerBox = {boxX : el.boxX, boxY: el.boxY}
           } else {
