@@ -33,15 +33,15 @@ const BoxItem = class {
 let boxArr = [[...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)]].map((el_, index_) => {
   return el_.map((el, index) => {
     return new BoxItem({
-      boxX: index,
-      boxY: index_,
+      boxX: index_,
+      boxY: index,
       isSelected: false,
       box: new Sprite({
         imgSrc: `${iconPath}/box.png`,
         width: boxConfig.width,
         height: boxConfig.height,
-        x: (boxConfig.width * index) + boxConfig.startX,
-        y: (-screenHeight + boxConfig.startY) + index_ * boxConfig.height
+        x: (boxConfig.width * index_) + boxConfig.startX,
+        y: (-screenHeight + boxConfig.startY) + index * boxConfig.height
       })
     })
   })
@@ -49,9 +49,10 @@ let boxArr = [[...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [.
 let selectBoxArr = [[...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)], [...Array(10)]].map((el_, index_) => {
   return el_.map((el, index) => {
     return new BoxItem({
-      boxX: index,
-      boxY: index_,
+      boxX: index_,
+      boxY: index,
       isSelected: false,
+      die: false,
       box: new Sprite({
         imgSrc: `${iconPath}/box.png`,
         width: boxConfig.width,
@@ -83,6 +84,52 @@ export default class Box {
     this.boxList = boxList
     this.boxArr = boxArr
     this.selectBoxArr = selectBoxArr
+    this.plane = (centerBox) => {
+      return [
+        {
+          boxX: centerBox.boxX,
+          boxY: centerBox.boxY - 1,
+          die: true
+        }, {
+          boxX: centerBox.boxX - 2,
+          boxY: centerBox.boxY,
+          die: false
+        }, {
+          boxX: centerBox.boxX - 1,
+          boxY: centerBox.boxY,
+          die: false
+        }, {
+          boxX: centerBox.boxX,
+          boxY: centerBox.boxY,
+          die: false
+        }, {
+          boxX: centerBox.boxX + 1,
+          boxY: centerBox.boxY,
+          die: false
+        }, {
+          boxX: centerBox.boxX + 2,
+          boxY: centerBox.boxY,
+          die: false
+        }, {
+          boxX: centerBox.boxX,
+          boxY: centerBox.boxY + 1,
+          die: false
+        },
+        {
+          boxX: centerBox.boxX - 1,
+          boxY: centerBox.boxY + 2,
+          die: false
+        }, {
+          boxX: centerBox.boxX,
+          boxY: centerBox.boxY + 2,
+          die: false
+        }, {
+          boxX: centerBox.boxX + 1,
+          boxY: centerBox.boxY + 2,
+          die: false
+        }
+      ]
+    }
   }
   drawBox(ctx = this.ctx) {
     boxArr.forEach((el_, index_) => {
@@ -94,6 +141,18 @@ export default class Box {
       el_.forEach((el, index) => {
         el.box.draw(ctx)
       })
+    })
+  }
+  drawPlane(boxX, boxY) {
+    let centerBox = Object.assign({}, {boxX, boxY})
+    this.plane(centerBox).forEach((box, index) => {
+      if (this.boxArr[box.boxX] && this.boxArr[box.boxX][box.boxY]) {
+        this.boxArr[box.boxX][box.boxY].die = box.die
+        this.boxArr[box.boxX][box.boxY].plane = dataBus.isPlaneMove
+        this.boxArr[box.boxX][box.boxY].switchBox(true)
+      } else {
+        box.inexist = true
+      }
     })
   }
   cleanBoxList() {

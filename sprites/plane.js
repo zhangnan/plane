@@ -20,7 +20,18 @@ const Plane = class {
       width: 79 / scallingRadio,
       height: 79 / scallingRadio
     })
+    this.x = this.button.x
+    this.y = this.button.y
     this.index = index
+  }
+  move(movePoint) {
+    this.button = new Sprite({
+      imgSrc: `${iconPath}/plane-button.png`,
+      x: movePoint.pageX - 20 || 0,
+      y: movePoint.pageY - screenHeight - 20 || 0,
+      width: 79 / scallingRadio,
+      height: 79 / scallingRadio
+    })
   }
 }
 
@@ -32,7 +43,17 @@ export default class Clover {
     })
     this.cleanBtn = cleanBtn
   }
-
+  clean() {
+    this.planeList.forEach((plane, index) => {
+      plane.button = new Sprite({
+        imgSrc: `${iconPath}/plane-button.png`,
+        x: plane.x,
+        y: plane.y,
+        width: 79 / scallingRadio,
+        height: 79 / scallingRadio
+      })
+    })
+  }
   draw(ctx = this.ctx) {
     this.planeList.forEach((plane, index) => {
       plane.button.draw(ctx)
