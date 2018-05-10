@@ -39,13 +39,14 @@ export default class Clover {
   constructor(ctx) {
     this.ctx = ctx
     this.planeList = [...Array(3)].map((plane, index) => {
-      return new Plane(index)
+      return {planeIcon: new Plane(index)}
     })
     this.cleanBtn = cleanBtn
   }
   clean() {
     this.planeList.forEach((plane, index) => {
-      plane.button = new Sprite({
+      delete plane.planeBox
+      plane.planeIcon.button = new Sprite({
         imgSrc: `${iconPath}/plane-button.png`,
         x: plane.x,
         y: plane.y,
@@ -56,7 +57,7 @@ export default class Clover {
   }
   draw(ctx = this.ctx) {
     this.planeList.forEach((plane, index) => {
-      plane.button.draw(ctx)
+      plane.planeIcon.button.draw(ctx)
     })
     this.cleanBtn.draw(ctx)
   }

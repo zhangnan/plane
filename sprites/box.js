@@ -22,12 +22,24 @@ const BoxItem = class {
       this.isSelected = !this.isSelected
     }
     this.box = new Sprite({
-      imgSrc: this.isSelected ? `${iconPath}/box-dark.png` : `${iconPath}/box.png`,
+      imgSrc: this.isSelected ? `${iconPath}/box-active.png` : `${iconPath}/box.png`,
       width: boxConfig.width,
       height: boxConfig.height,
       x: this.box.x,
       y: this.box.y
     })
+  }
+  switchColor(color) {
+    if(this.isSelected) {
+      this.box = new Sprite({
+        imgSrc: this.plane.indexOf(dataBus.isPlaneMove) != -1 ? `${iconPath}/box-${color}.png` : `${iconPath}/box-${color}.png`,
+        width: boxConfig.width,
+        height: boxConfig.height,
+        x: this.box.x,
+        y: this.box.y
+      })
+    }
+    
   }
 }
 
@@ -147,17 +159,18 @@ export default class Box {
   drawPlane(boxX, boxY) {
     this.cleanBoxList()
     let centerBox = Object.assign({}, {boxX, boxY})
-    this.plane(centerBox).forEach((box, index) => {
+    let planeArr = this.plane(centerBox)
+    planeArr.forEach((box, index) => {
       if (this.boxArr[box.boxX] && this.boxArr[box.boxX][box.boxY]) {
         this.boxArr[box.boxX][box.boxY].die = box.die
         if (this.boxArr[box.boxX][box.boxY].plane.indexOf(dataBus.isPlaneMove) < 0) {
           this.boxArr[box.boxX][box.boxY].plane.push(dataBus.isPlaneMove)
         }
         this.boxArr[box.boxX][box.boxY].switchBox(true)
-      } else {
-        box.inexist = true
+        box.box = this.boxArr[box.boxX][box.boxY]
       }
     })
+    return planeArr
   }
   cleanBoxList() {
     this.boxArr.forEach((el_, index_) => {
@@ -165,6 +178,20 @@ export default class Box {
         if(el.plane.length == 1 && (el.plane.indexOf(dataBus.isPlaneMove) > -1) && el.plane[el.plane.length -1] === dataBus.isPlaneMove) {
           el.plane.splice(el.plane.indexOf(dataBus.isPlaneMove), 1)
           el.switchBox(false)
+        } else if(el.plane.length > 1) {
+          el.plane.splice(el.plane.indexOf(dataBus.isPlaneMove), 1)
+          el.switchColor('dark')
+        }
+      })
+    })
+  }
+  switchColor() {
+    this.boxArr.forEach((el_, index_) => {
+      el_.forEach((el, index) => {
+        if (el.plane.length == 1 && (el.plane.indexOf(dataBus.isPlaneMove) > -1) && el.plane[el.plane.length - 1] === dataBus.isPlaneMove) {
+          el.switchColor('active')
+        } else {
+          el.switchColor('dark')
         }
       })
     })
